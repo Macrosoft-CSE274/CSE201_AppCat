@@ -3,9 +3,28 @@ import java.util.ArrayList;
 
 /**
  * Created by Kunting Qi on 2017/10/22.
+ * This is the main program for thsi project
+ * THis program nearly hold most of the opratetion
+ * between the users and the repository
+ *
+ * When object of this class is created
+ * a defauly visitor will be assign to the user
+ * after calling the login method, the current user will switch to
+ * another user in the repository
+ *
+ * by getting the identifier of the current user
+ * the current user will have different access to kinds of operation
+ *
  */
 public class AppCat implements Serializable {
 
+    /**
+     * this is the identifier for users
+     * 1 is the visitor
+     * 2 is the User Account
+     * 3 is the Moderator
+     * 4 is the Administrator
+     */
     public static int VISITOR = 1;
     public static int USER = 2;
     public static int MODERATOR = 3;
@@ -14,12 +33,22 @@ public class AppCat implements Serializable {
     private Repository infoStored;
     private User currentUser;
 
+    /**
+     * this is the constructor of this class
+     * start the repository
+     * and create a defauly visitor user
+     */
     public AppCat()
     {
         infoStored = new Repository(); // I don't know should I use singeleton design pattern at there...
         currentUser = new User(1);
     }
 
+    /**
+     * this login process which is actually switch to another user
+     * @param username the username of the account in String
+     * @param password the password of the account in String
+     */
     public void login(String username, String password)
     {
         ArrayList<UserAccount> list = infoStored.getUsers();
@@ -33,6 +62,16 @@ public class AppCat implements Serializable {
         }
     }
 
+    /**
+     * the current user will submit a app request
+     * @param name name of the app
+     * @param developer name of the developer
+     * @param platform name of the platform
+     * @param version
+     * @param description
+     * @param webLink
+     * @return
+     */
     public boolean submitAppReq(String name, String developer, String platform, String version, String description, String webLink)
     {
         if(currentUser.identifier == VISITOR)
