@@ -3,13 +3,18 @@
  */
 public class Moderator extends UserAccount {
 
-    public Moderator(String name, String password)
+    public Moderator(String name, String password, int identifier)
     {
-        super(name, password);
+        super(name, password, identifier);
     }
 
-    public void deleteComment()
+    public void deleteComment(Comment choosed, App appChoosed)
     {
+        appChoosed.removeComment(choosed);
+    }
 
+    public int getIdentifier()
+    {
+        return super.identifier;
     }
 }

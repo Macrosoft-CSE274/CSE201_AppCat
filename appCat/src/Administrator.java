@@ -3,23 +3,30 @@
  */
 public class Administrator extends UserAccount {
 
-    public Administrator(String name, String password)
+    public Administrator(String name, String password, int identifier)
     {
-        super(name, password);
+        super(name, password, identifier);
     }
 
-    public boolean approveSub()
+    public boolean approveSub(AppSubmit submit)
     {
-
+        submit.setStatus(AppSubmit.APPROVED);
+        return true;
     }
 
-    public boolean denySub()
+    public boolean denySub(AppSubmit submit)
     {
-
+        submit.setStatus(AppSubmit.DENIED);
+        return true;
     }
 
-    public String giveFeedBack()
+    public void giveFeedBack(String feedback, AppSubmit submit)
     {
+        submit.setFeedback(feedback);
+    }
 
+    public int getIdentifier()
+    {
+        return super.getIdentifier();
     }
 }
