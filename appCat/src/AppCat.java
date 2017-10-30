@@ -44,12 +44,17 @@ public class AppCat implements Serializable {
         currentUser = new User(1);
     }
 
+    public boolean addUser(String newUser, String password)
+    {
+        return infoStored.addUser(newUser, password);
+    }
+
     /**
      * this login process which is actually switch to another user
      * @param username the username of the account in String
      * @param password the password of the account in String
      */
-    public void login(String username, String password)
+    public boolean login(String username, String password)
     {
         ArrayList<UserAccount> list = infoStored.getUsers();
         for(UserAccount each : list)
@@ -57,9 +62,10 @@ public class AppCat implements Serializable {
             if(each.getUsername().equals(username) && each.getPassword().equals(password) )
             {
                 currentUser = each;
-                break;
+                return true;
             }
         }
+        return false;
     }
 
     /**

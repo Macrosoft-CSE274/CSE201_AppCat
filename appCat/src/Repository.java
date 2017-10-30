@@ -53,9 +53,16 @@ public class Repository implements Serializable{
      * @param newOne new User
      * @return  whether the process is successful
      */
-    public boolean addUser(UserAccount newOne)
+    public boolean addUser(String newOne, String password)
     {
-        return users.add(newOne);
+        for (UserAccount each: users)
+        {
+            if(each.getUsername().equals(newOne))
+            {
+                return false;
+            }
+        }
+        return users.add( new UserAccount(newOne, password, 2) );
     }
 
     /**
