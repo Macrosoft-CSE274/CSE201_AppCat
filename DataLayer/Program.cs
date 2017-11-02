@@ -6,6 +6,13 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
+/*
+ * Author: Huijie Bao
+ * Goal: Create .txt file help bulk insert
+ * Capture the data from google play website, store them in the .txt file
+ * field terminated by "\t", row terminated by "\n", which support SQL bulk insert
+ */
+
 namespace GetGoolePlayData
 {
     public class APP
@@ -54,6 +61,23 @@ namespace GetGoolePlayData
             this.weblink          = link         ;
             this.deleted          = del          ;
             this.description      = desc         ;
+        }
+        public void getString()
+        {
+            Console.WriteLine(
+                    this.ID              +"\t"+
+                    this.Name            +"\t"+
+                    this.AppLabel        +"\t"+
+                    this.AppLabelID      +"\t"+
+                    this.PlatformID      +"\t"+
+                    this.Industry        +"\t"+
+                    this.price           +"\t"+
+                    this.NumOfInstalls   +"\t"+
+                    this.AverageStar     +"\t"+
+                    this.weblink         +"\t"+
+                    this.description     +"\t"+
+                    this.deleted
+                                );
         }
     }
     class Program
@@ -154,6 +178,7 @@ namespace GetGoolePlayData
             {
                 AppArray[i] = new APP();
             }
+            #region set App array
             foreach(string appurltemp in AppURLStack)
             {
                 string AppSource = GetWebSourceCode(appurltemp);
@@ -161,45 +186,119 @@ namespace GetGoolePlayData
                 int PlatformID = 1;
                 int deleted = 0;
                 float AverageStar = 0;
-                string[] industryHelper = AppSource.Split(new string[] { "<span itemprop=\"name\">" },StringSplitOptions.None);
-                string Industry = industryHelper[1].Substring(0, industryHelper[1].IndexOf('<'));
-                string[] priceHelper = AppSource.Split(new string[] { "\" itemprop=\"price\">" }, StringSplitOptions.None);
-                string price = priceHelper[0].Substring(priceHelper[0].LastIndexOf('"')+1, priceHelper[0].Length - priceHelper[0].LastIndexOf('"')-1);
-                if(price.Contains('$'))
+                string Industry = "null";
+                string description = "null";
+                string Name = "null";
+                string price = "0";
+                string label = "null";
+                string numOfIns = "null";
+                int labelID = 1;
+                try
                 {
-                    price = price.Substring(1, price.Length - 1);
+                    string[] industryHelper = AppSource.Split(new string[] { "<span itemprop=\"name\">" },StringSplitOptions.None);
+                    Industry = industryHelper[1].Substring(0, industryHelper[1].IndexOf('<'));
                 }
-                string[] nameHelper = AppSource.Split(new string[] { "</script><title id=\"main-title\">" }, StringSplitOptions.None);
-                string[] nameHelperHelper = nameHelper[1].Split(new string[] { " - Android Apps on Google Play" },StringSplitOptions.None);
-                string Name = nameHelperHelper[0];
-                string[] labelHelper = AppSource.Split(new string[] { "\"document-subtitle category\" href=\"/store/apps/category/" }, StringSplitOptions.None);
-                string label = labelHelper[1].Substring(0,labelHelper[1].IndexOf('"'));
-                if(label == "FAMILY? age = AGE_RANGE1")
+                catch
                 {
-                    label = "FAMILY [0,5]";
+                    Console.WriteLine(appurltemp + " has erros in Industry");
                 }
-                if (label == "FAMILY? age = AGE_RANGE2")
+
+                try
                 {
-                    label = "FAMILY [6,8]";
-                }
-                if (label == "FAMILY? age = AGE_RANGE3")
-                {
-                    label = "FAMILY [9,255]";
-                }
-                label = label.Replace("_"," ");
-                int labelID = 0;
-                for(int i = 0; i < category.Length; i++)
-                {
-                    if (category[i] == label)
+                    string[] priceHelper = AppSource.Split(new string[] { "\" itemprop=\"price\">" }, StringSplitOptions.None);
+                    price = priceHelper[0].Substring(priceHelper[0].LastIndexOf('"') + 1, priceHelper[0].Length - priceHelper[0].LastIndexOf('"') - 1);
+                    if (price.Contains('$'))
                     {
-                        labelID = i;
-                        break;
+                        price = price.Substring(1, price.Length - 1);
                     }
                 }
-                string[] numOfInsHelper = AppSource.Split(new string[] { "itemprop=\"numDownloads\">" },StringSplitOptions.None);
-                string numOfIns = numOfInsHelper[1].Substring(0, numOfInsHelper[1].IndexOf('<'));
-                AppArray[AppCounter].SetAPP(ID,Name,label,labelID, PlatformID, Industry, float.Parse(price), numOfIns, AverageStar, appurltemp, deleted, "");
+                catch
+                {
+                    Console.WriteLine(appurltemp + " has erros in price");
+                }
+
+                try
+                {
+                    string[] nameHelper = AppSource.Split(new string[] { "</script><title id=\"main-title\">" }, StringSplitOptions.None);
+                    string[] nameHelper2 = nameHelper[1].Split(new string[] { " - Android Apps on Google Play" }, StringSplitOptions.None);
+                    Name = nameHelper2[0];
+                }
+                catch
+                {
+                    Console.WriteLine(appurltemp + " has erros in App Name");
+                }
+
+                try
+                {
+                    string[] labelHelper = AppSource.Split(new string[] { "\"document-subtitle category\" href=\"/store/apps/category/" }, StringSplitOptions.None);
+                    label = labelHelper[1].Substring(0, labelHelper[1].IndexOf('"'));
+                    if (label == "FAMILY? age = AGE_RANGE1")
+                    {
+                        label = "FAMILY [0,5]";
+                    }
+                    if (label == "FAMILY? age = AGE_RANGE2")
+                    {
+                        label = "FAMILY [6,8]";
+                    }
+                    if (label == "FAMILY? age = AGE_RANGE3")
+                    {
+                        label = "FAMILY [9,255]";
+                    }
+                    label = label.Replace("_", " ");
+                }
+                catch
+                {
+                    Console.WriteLine(appurltemp + " has erros in Label");
+                }
+
+                try
+                {
+                    for (int i = 0; i < category.Length; i++)
+                    {
+                        if (category[i] == label)
+                        {
+                            labelID = i;
+                            break;
+                        }
+                    }
+                }
+                catch
+                {
+                    Console.WriteLine(appurltemp + " has erros in Label ID");
+                }
+
+
+                try
+                {
+                    string[] numOfInsHelper = AppSource.Split(new string[] { "itemprop=\"numDownloads\">" }, StringSplitOptions.None);
+                    numOfIns = numOfInsHelper[1].Substring(0, numOfInsHelper[1].IndexOf('<'));
+                }
+                catch
+                {
+                    Console.WriteLine(appurltemp+" has erros in Num of installing");
+                }
+
+                try
+                {
+                    string[] descripHelper = AppSource.Split(new string[] { "itemprop=\"description\">" }, StringSplitOptions.None);
+                    string[] descripHelper2 = descripHelper[1].Split('>');
+                    string[] descripHelper3 = descripHelper2[1].Split(new string[] { " <br" }, StringSplitOptions.None);
+                    description = descripHelper3[0];
+                }
+                catch
+                {
+                    Console.WriteLine(appurltemp + " has erros in description");
+                }
+
+                AppArray[AppCounter].SetAPP(ID,Name,label,labelID, PlatformID, Industry, float.Parse(price), numOfIns, AverageStar, appurltemp, deleted, description);
+                //Console.WriteLine(ID+ "\t" + Name + "\t" + label+"\t" + labelID + "\t" + PlatformID + "\t" + Industry + "\t" + float.Parse(price)+ "\t" + numOfIns + "\t" + AverageStar + "\t" + appurltemp + "\t" + deleted + "\t" + description);
                 AppCounter++;
+            }
+            #endregion
+
+            foreach(APP apptemp in AppArray)
+            {
+                apptemp.getString();
             }
         }
     }
