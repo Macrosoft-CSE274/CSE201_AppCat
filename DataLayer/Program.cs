@@ -6,7 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
-/*
+/* GetGoolePlayData
  * Author: Huijie Bao
  * Goal: Create .txt file help bulk insert
  * Capture the data from google play website, store them in the .txt file
@@ -62,12 +62,11 @@ namespace GetGoolePlayData
             this.deleted          = del          ;
             this.description      = desc         ;
         }
-        public void getString()
+        public string getString()
         {
-            Console.WriteLine(
+            return(
                     this.ID              +"\t"+
                     this.Name            +"\t"+
-                    this.AppLabel        +"\t"+
                     this.AppLabelID      +"\t"+
                     this.PlatformID      +"\t"+
                     this.Industry        +"\t"+
@@ -76,10 +75,11 @@ namespace GetGoolePlayData
                     this.AverageStar     +"\t"+
                     this.weblink         +"\t"+
                     this.description     +"\t"+
-                    this.deleted
+                    this.deleted         
                                 );
         }
     }
+
     class Program
     {
         public static String GetWebSourceCode(string Url)
@@ -171,7 +171,7 @@ namespace GetGoolePlayData
             //}
             #endregion
 
-
+            #region Write App.txt
             int AppCounter = 0;
             APP[] AppArray = new APP[AppURLStack.Count];
             for(int i= 0;i<AppURLStack.Count;i++)
@@ -277,13 +277,19 @@ namespace GetGoolePlayData
                 {
                     Console.WriteLine(appurltemp+" has erros in Num of installing");
                 }
-
                 try
                 {
-                    string[] descripHelper = AppSource.Split(new string[] { "itemprop=\"description\">" }, StringSplitOptions.None);
-                    string[] descripHelper2 = descripHelper[1].Split('>');
-                    string[] descripHelper3 = descripHelper2[1].Split(new string[] { " <br" }, StringSplitOptions.None);
+                    string[] descripHelper = AppSource.Split(new string[] { "itemprop=\"de" }, StringSplitOptions.None);
+                    //Console.WriteLine(descripHelper[1]);
+                    string descripHelper2 = descripHelper[1].Substring(descripHelper[1].IndexOf('>'));
+                    descripHelper2 = descripHelper2.Substring(descripHelper[1].IndexOf('>'));
+                    //string[] descripHelper3 = descripHelper2.Split(new string[] { "</div>" }, StringSplitOptions.None);
+                    string[] descripHelper3 = descripHelper2.Split('<');
                     description = descripHelper3[0];
+                    description = description.Replace("<br>"," ");//incomplete, convert html<br> to "\n" may cause bulk insert false
+                    description = description.Replace("\t"," ");
+                    description = description.Replace("\n", " ");
+                    //Console.WriteLine(description);
                 }
                 catch
                 {
@@ -295,11 +301,16 @@ namespace GetGoolePlayData
                 AppCounter++;
             }
             #endregion
+            string AppTXT = "AppID\tAppName\tAppLabelID\tPlatformID\tAppIndustry\tPrice\tNumOfInstalls\tAverageStar\tWebLink\tDescription\tDeleted\r\n";
 
-            foreach(APP apptemp in AppArray)
+            foreach (APP apptemp in AppArray)
             {
-                apptemp.getString();
+                AppTXT+=apptemp.getString()+"\r\n";
             }
+            System.IO.File.WriteAllText("APP.txt", AppTXT);
+            #endregion
+
+
         }
     }
 }
