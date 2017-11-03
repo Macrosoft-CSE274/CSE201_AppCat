@@ -1,4 +1,4 @@
-﻿CREATE DATABASE dbAppStore
+CREATE DATABASE dbAppStore
 
 GO
 USE dbAppstore
@@ -35,14 +35,15 @@ GO
 CREATE TABLE tblApp
 (
 [AppID]				int				NOT NULL IDENTITY PRIMARY KEY,
-[AppName]			varchar(50)		NOT NULL,
+[AppName]			varchar(100)		NOT NULL,
 [AppLabelID]		int				NOT NULL REFERENCES tblAppLabel([AppLabelID]),
 [PlatformID]		int				NOT NULL REFERENCES tblPlatform([PlatformID]),
-[AppIndustry]		varchar(50)		NOT NULL,
+[AppIndustry]		varchar(100)		NOT NULL,
 [Price]				float			NOT NULL,
 [NumOfInstalls]		varchar(50)		NOT NULL,
 [AverageStar]		float			NOT NULL,
-[WebLink]			varchar(100)	NOT NULL,
+[WebLink]			varchar(200)	NOT NULL,
+[Description]		varchar(1500)	NOT NULL,
 [Deleted]			bit				DEFAULT 0
 )
 --[TotalStar]			float			NOT NULL,
@@ -54,7 +55,7 @@ CREATE TABLE tblComments
 [CommentID]			int				NOT NULL IDENTITY PRIMARY KEY,
 [AppID]				int				NOT NULL REFERENCES tblApp([AppID]),
 [UserID]			int				NOT NULL REFERENCES tblUser([UserID]),
-[CommentDetail]		varchar(200)	NOT NULL,
+[CommentDetail]		varchar(300)	NOT NULL,
 [CommentDate]		Date			NOT NULL,
 [CommentStar]		float				NOT NULL,
 [Deleted]			bit				DEFAULT 0
@@ -79,7 +80,7 @@ VALUES	('Huijie Bao','2333XD',0),
 --bulk insert AppLabel by data online
 GO 
 BULK INSERT tblAppLabel
-FROM 'C:\Users\zzhxb\source\repos\GetGoolePlayData\GetGoolePlayData\bin\Debug\AppLabel.txt'
+FROM 'C:\Users\zzhxb\Desktop\DataLayer\GetGoolePlayData\GetGoolePlayData\GetGoolePlayData\bin\Debug\AppLabel.txt'
 -- The Address of AppLabel.txt may change
 WITH (
 	FIRSTROW = 2,
@@ -96,11 +97,23 @@ WITH (
 --		('News',0),
 --		('Education',0)
 
-GO
-INSERT INTO tblApp
-VALUES	('POKEMON GO',1,1,'Niantic, Inc.',0,'100,000,000 - 500,000,000',0,'https://play.google.com/store/apps/details?id=com.nianticlabs.pokemongo',0),
-		('TED',5,1,'TED Conferences LLC',0,'100,000,000 - 500,000,000',0,'https://play.google.com/store/apps/details?id=com.ted.android',0),
-		('MINECRAFT',1,1,'BLABLABALA',6.99,'10,000,000 - 50,000,000',0,'https://play.google.com/store/apps/details?id=com.mojang.minecraftpe',0)
+GO 
+BULK INSERT tblApp
+FROM 'C:\Users\zzhxb\Desktop\DataLayer\GetGoolePlayData\GetGoolePlayData\GetGoolePlayData\bin\Debug\App.txt'
+-- The Address of AppLabel.txt may change
+WITH (
+	FIRSTROW = 2,
+	FIELDTERMINATOR = '\t',
+	ROWTERMINATOR = '\n',
+	TABLOCK
+)
+
+
+--GO
+--INSERT INTO tblApp
+--VALUES	('POKEMON GO',1,1,'Niantic, Inc.',0,'100,000,000 - 500,000,000',0,'https://play.google.com/store/apps/details?id=com.nianticlabs.pokemongo',0),
+--		('TED',5,1,'TED Conferences LLC',0,'100,000,000 - 500,000,000',0,'https://play.google.com/store/apps/details?id=com.ted.android',0),
+--		('MINECRAFT',1,1,'BLABLABALA',6.99,'10,000,000 - 50,000,000',0,'https://play.google.com/store/apps/details?id=com.mojang.minecraftpe',0)
 -------------------------------INSERT DATA END
 
 GO
@@ -108,7 +121,7 @@ USE dbAppstore
 ------------------------------ CREATE PROCEDURE spSearchAppByKeywords
 GO
 CREATE PROCEDURE spSearchAppByKeywords
-@keywords	varchar(50)
+@keywords	varchar(100)
 AS
 	SET NOCOUNT ON
 SELECT	a.AppName, 
@@ -130,7 +143,7 @@ WHERE a.AppName LIKE '%'+ @keywords + '%'
 ------------------------------ CREATE PROCEDURE spSearchAllByIndustryKeywords
 GO
 CREATE PROCEDURE spSearchAllByIndustryKeywords
-@AppIndustryKeywords	varchar(50)
+@AppIndustryKeywords	varchar(100)
 AS
 	SET NOCOUNT ON
 SELECT	a.AppName, 
@@ -190,18 +203,18 @@ ELSE
 ------------------------------ CREATE PROCEDURE spAddComment
 GO
 CREATE PROCEDURE spAddComment
-@AppName			varchar(50),
+@AppID				int,
 @UserName			varchar(50),
-@CommentDetail		varchar(200),
+@CommentDetail		varchar(300),
 @CommentStar		float
 AS
 	SET NOCOUNT ON
 IF (EXISTS(SELECT * FROM tblUser WHERE UserName = @UserName AND Deleted = 0) 
-	AND EXISTS(SELECT * FROM tblApp WHERE AppName = @AppName AND Deleted = 0))
+	AND EXISTS(SELECT * FROM tblApp WHERE AppID = @AppID AND Deleted = 0))
 	BEGIN
 		
 		INSERT INTO tblComments
-		VALUES((SELECT TOP 1 AppID FROM tblApp WHERE AppName = @AppName AND Deleted = 0),
+		VALUES((SELECT TOP 1 AppID FROM tblApp WHERE AppID = @AppID AND Deleted = 0),
 			   (SELECT TOP 1 UserID FROM tbluser WHERE UserName = @UserName AND Deleted = 0),
 			   @CommentDetail,
 			   GETDATE(),
@@ -212,8 +225,8 @@ IF (EXISTS(SELECT * FROM tblUser WHERE UserName = @UserName AND Deleted = 0)
 		--	UserID = (SELECT TOP 1 UserID FROM tbluser WHERE UserName = @UserName AND Deleted = 0)
 		--WHERE CommentID = @@IDENTITY
 		UPDATE tblApp
-		SET AverageStar = (SELECT AVG(CommentStar) FROM tblComments WHERE AppName = @AppName)
-		WHERE AppName = @AppName
+		SET AverageStar = (SELECT AVG(CommentStar) FROM tblComments WHERE AppID= @AppID)
+		WHERE AppID = @AppID
 		SELECT [SUCCESS] = 1
 	END
 ELSE 
@@ -224,3 +237,7 @@ ELSE
 	-------- CREATE PROCEDURE -- filter
 
 
+	-- store procedure that Add/delete/modify/read a user/comment/app
+	--admin CRUD user/comment/app
+	--user CUD own comment
+	--user R app/comment
