@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block head %}
+<title>Appcat - Profile</title>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <h1>Profile</h1>
+            <div class="container">
+            <p>Username: {{ user }}</p>
+            <p>First Name: {{ user.first_name }}</p>
+            <p>Last Name: {{ user.last_name }}</p>
+            <p>Email: {{ email }}</p>
+            </div>
+        <a href="/accounts/profile/edit_profile/" class="btn btn-info" role="button">Edit Profile</a>
+        <button type="submit" href="/accounts/logout/">Log Out</button>
+
+    </div>
+{% endblock %}
