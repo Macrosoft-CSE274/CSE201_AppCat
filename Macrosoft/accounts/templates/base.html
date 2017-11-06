@@ -1,0 +1,65 @@
+<html>
+    <title>
+        {% block title %}
+        AppCat
+        {% endblock %}
+    </title>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+
+        {% load static %}
+        <link rel="stylesheet" href="{% static 'accounts/style.css" type="text/css">
+        {% block head %}
+        <title>Base</title>
+        {% endblock %}
+    </head>
+    <body>
+
+        <div class="container-primary">
+        <nav class="navbar navbar-expand-sm navbar-light" style="width:100%;padding:15px;border-width:1px;border-style:solid;background: MediumPurple;">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#nav-content" aria-controls="nav-content" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+            </button>
+
+        <!-- Brand -->
+            <a class="navbar-brand" href="/accounts">
+                {% load static %}
+                <img src="{% static 'img/catLogo2.png' %}" class="img-thumbnail" width="50" height="50" class="d-inline-block align-top" alt="">
+                AppCat
+            </a>
+
+        <!-- Links -->
+            <div class="collapse navbar-collapse" id="nav-content">
+               <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/accounts/login">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/accounts/register">Register</a>
+                </li>
+               </ul>
+            </div>
+
+        <!-- Search -->
+                <form class="form-inline" role="search">
+                    <input type="text" class="form-control">
+                 <button type="submit" class="btn btn-secondary">Search</button>
+                 </form>
+        </nav>
+
+        </div>
+        <div class="container">
+            <br>
+            {% block body %}
+            <h1>AppCat - a Catalog of Apps</h1>
+
+            {% endblock %}
+              <br>
+        </div>
+    </body>
+</html>
+
+
