@@ -1,7 +1,7 @@
-CREATE DATABASE dbAppStore
+CREATE DATABASE dbAppStore;
 
 GO
-USE dbAppstore
+USE dbAppstore;
 
 ------------------------------ CREATE TABLE BEGIN
 
@@ -11,16 +11,19 @@ CREATE TABLE tblAppLabel
 [AppLabelID]		int				NOT NULL IDENTITY PRIMARY KEY,
 [AppLabelName]		varchar(50)		NOT NULL,
 [Deleted]			bit				DEFAULT 0
-)
+);
  
 GO
 CREATE TABLE tblUser
 (
 [UserID]			int				NOT NULL IDENTITY PRIMARY KEY,
 [UserName]			varchar(50)		NOT NULL,
+[FirstName]			varchar(50)		NOT NULL,
+[LastName]			varchar(50)		NOT NULL,
+[Email]				varchar(100)	NOT NULL,
 [UserPassword]		varchar(50)		NOT NULL,
 [Deleted]			bit				DEFAULT 0
-)
+);
 
 GO
 CREATE TABLE tblPlatform
@@ -28,7 +31,7 @@ CREATE TABLE tblPlatform
 [PlatformID]		int				NOT NULL IDENTITY PRIMARY KEY,
 [PlatformName]		varchar(50)		NOT NULL,
 [Deleted]			bit				DEFAULT 0
-)
+);
 
 
 GO
@@ -45,7 +48,7 @@ CREATE TABLE tblApp
 [WebLink]			varchar(200)	NOT NULL,
 [Description]		varchar(1500)	NOT NULL,
 [Deleted]			bit				DEFAULT 0
-)
+);
 --[TotalStar]			float			NOT NULL,
 --[NumOfComments]		float			NOT NULL,
 ---------------------------------------------------
@@ -59,11 +62,11 @@ CREATE TABLE tblComments
 [CommentDate]		Date			NOT NULL,
 [CommentStar]		float				NOT NULL,
 [Deleted]			bit				DEFAULT 0
-)
+);
 
 ------------------------------ CREATE TABLE END
 GO
-USE dbAppstore
+USE dbAppstore;
 --------------------------------INSERT DATA
 GO
 INSERT INTO tblPlatform
@@ -71,11 +74,10 @@ VALUES	('Android',0),
 		('IOS',0),
 		('Windows',0),
 		('Mac',0),
-		('Linux',0)
+		('Linux',0);
 GO
 INSERT INTO tblUser
-VALUES	('Huijie Bao','2333XD',0),
-		('Dingbang Wang','6666gg',0)
+VALUES	('zzhxbhj','Huijie','Bao','2333XD',0);
 
 --bulk insert AppLabel by data online
 GO 
@@ -87,7 +89,7 @@ WITH (
 	FIELDTERMINATOR = '\t',
 	ROWTERMINATOR = '\n',
 	TABLOCK
-)
+);
 
 --GO -- hard code insert
 --INSERT INTO tblAppLabel
@@ -106,7 +108,7 @@ WITH (
 	FIELDTERMINATOR = '\t',
 	ROWTERMINATOR = '\n',
 	TABLOCK
-)
+);
 
 
 --GO
@@ -117,7 +119,7 @@ WITH (
 -------------------------------INSERT DATA END
 
 GO
-USE dbAppstore
+USE dbAppstore;
 ------------------------------ CREATE PROCEDURE spSearchAppByKeywords
 GO
 CREATE PROCEDURE spSearchAppByKeywords
@@ -138,7 +140,7 @@ on a.AppLabelID = al.AppLabelID
 join tblPlatform p
 on p.PlatformID = a.PlatformID
 WHERE a.AppName LIKE '%'+ @keywords + '%'
-	AND a.Deleted = 0			
+	AND a.Deleted = 0		;	
 	
 ------------------------------ CREATE PROCEDURE spSearchAllByIndustryKeywords
 GO
@@ -160,7 +162,7 @@ on a.AppLabelID = al.AppLabelID
 join tblPlatform p
 on p.PlatformID = a.PlatformID
 WHERE a.AppIndustry LIKE '%'+ @AppIndustryKeywords + '%'
-	AND a.Deleted = 0
+	AND a.Deleted = 0;
 
 ------------------------------ CREATE PROCEDURE spSearchAllByAppLabel
 GO
@@ -181,7 +183,7 @@ join tblAppLabel al
 on a.AppLabelID = al.AppLabelID
 join tblPlatform p
 on p.PlatformID = a.PlatformID
-WHERE al.AppLabelName = @AppLabelName AND a.Deleted = 0
+WHERE al.AppLabelName = @AppLabelName AND a.Deleted = 0;
 
 
 ------------------------------ CREATE PROCEDURE spLogin
@@ -198,7 +200,7 @@ IF EXISTS(SELECT * FROM tblUser WHERE UserName = @UserName AND UserPassword = @P
 ELSE 
 	BEGIN
 		SELECT [SUCCESS] = 0
-	END
+	END;
 
 ------------------------------ CREATE PROCEDURE spAddComment
 GO
@@ -232,9 +234,102 @@ IF (EXISTS(SELECT * FROM tblUser WHERE UserName = @UserName AND Deleted = 0)
 ELSE 
 	BEGIN
 		SELECT [SUCCESS] = 0
-	END
+	END;
 
-	-------- CREATE PROCEDURE -- filter
+
+-------- CREATE PROCEDURE -- spAddAPP
+
+GO
+CREATE PROCEDURE spAddAPP	
+@AppName			varchar(100)	,
+@AppLabelID			int				,
+@PlatformID			int				,
+@AppIndustry		varchar(100)	,
+@Price				float			,
+@NumOfInstalls		varchar(50)		,
+@AverageStar		float			,
+@WebLink			varchar(200)	,
+@Description		varchar(1500)	
+AS
+	SET NOCOUNT ON
+IF NOT EXISTS (SELECT NULL FROM tblAPP WHERE AppName = @AppName) 
+	BEGIN
+		INSERT INTO tblApp
+		VALUES(		
+					@AppName		,
+					@AppLabelID		,
+					@PlatformID		,
+					@AppIndustry	,
+					@Price			,
+					@NumOfInstalls	,
+					@AverageStar	,
+					@WebLink		,
+					@Description	,
+					0	
+				)
+		SELECT [SUCCESS] = 1
+	END
+ELSE
+	BEGIN
+		SELECT [SUCCESS] = 0
+	END;
+
+
+-------- CREATE PROCEDURE -- spAddUser
+GO
+CREATE PROCEDURE spAddUser
+@UserName			varchar(50),
+@FirstName			varchar(50),
+@LastName			varchar(50),
+@email				varchar(100),
+@UserPassword		varchar(50),
+@ConfirmPassword	varchar(50)	
+AS
+	SET NOCOUNT ON
+IF (NOT EXISTS (SELECT NULL FROM tblUser WHERE UserName = @UserName) )
+	AND (@UserPassword = @ConfirmPassword)
+	BEGIN
+		INSERT INTO tblUser 
+		VALUES(@UserName,@FirstName,@LastName,@email,@UserPassword,0)
+		SELECT [SUCCESS] = 1
+	END
+ELSE
+	BEGIN
+		SELECT [SUCCESS] = 0
+	END;
+
+
+-------- CREATE PROCEDURE -- spUpdateUser
+GO
+CREATE PROCEDURE spUpdateUser
+@UserID				int	,
+@UserName			varchar(50),
+@FirstName			varchar(50),
+@LastName			varchar(50),
+@email				varchar(100),
+@UserPassword		varchar(50)
+AS
+	SET NOCOUNT ON
+IF (SELECT Deleted FROM tblUser WHERE UserID = @UserID) = 0
+	BEGIN
+		UPDATE tblUser
+		SET	UserName	 = @UserName	  ,
+			FirstName	 = @FirstName	  ,
+			LastName	 = @LastName	  ,
+			email		 = @email		  ,
+			UserPassword = @UserPassword  
+		WHERE UserID = @UserID
+		SELECT [SUCCESS] = 1
+	END
+ELSE
+	BEGIN
+		SELECT [SUCCESS] = 0
+	END;
+
+
+
+
+		-------- CREATE PROCEDURE -- filter
 
 
 	-- store procedure that Add/delete/modify/read a user/comment/app
