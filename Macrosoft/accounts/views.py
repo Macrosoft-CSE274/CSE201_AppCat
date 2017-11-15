@@ -39,4 +39,3 @@ def edit_profile(request):
         return render(request, 'accounts/edit_profile.html', args)
 
 
-# Create your views here.

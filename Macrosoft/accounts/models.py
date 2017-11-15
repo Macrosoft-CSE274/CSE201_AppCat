@@ -17,3 +17,12 @@ def create_profile(sender, **kwargs):
 
 post_save.connect(create_profile, sender=User)
 
+class ApplicationEntry(models.Model):
+    name = models.CharField(max_length=30, default='default')
+    developer = models.CharField(max_length=30, default='default')
+    platform = models.CharField(max_length=30, default='default')
+    versions = models.CharField(max_length=30, default='default')
+    rating = models.CharField(max_length=30, default='default')
+
+
+

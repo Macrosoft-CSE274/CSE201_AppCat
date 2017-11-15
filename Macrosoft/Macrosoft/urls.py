@@ -18,7 +18,7 @@ from django.contrib import admin
 from Macrosoft import views
 
 urlpatterns = [
-    url(r'^$', views.login_redirect, name='login_redirect'),
+    url(r'^$', views.home_redirect, name='home_redirect'),
     url(r'^admin/', admin.site.urls),
     url(r'^accounts/', include('accounts.urls'))
 ]

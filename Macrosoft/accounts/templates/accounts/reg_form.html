@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 
-{% block body %}
+{% block jumbo %}
+<div class="container">
     <h1>Register</h1>
     <form method="post">
         {% csrf_token %}
@@ -8,5 +9,5 @@
     <button type="submit">Submit</button>
 
     </form>
-
+</div>
 {% endblock %}
