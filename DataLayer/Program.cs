@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 /* GetGoolePlayData
@@ -29,7 +30,7 @@ namespace GetGoolePlayData
         public  string  weblink         { get; set; }
         public  int     deleted         { get; set; }
         public  string  description     { get; set; }
-
+        public  string  iconURL         { get; set; }
         public APP()
         {
             ID = 0;
@@ -44,10 +45,11 @@ namespace GetGoolePlayData
             weblink = "";
             deleted = 0;
             description = "";
+            iconURL = "";
         }
         public void SetAPP(int id, string name, string label, int labelID, int platformID,
                 string ind, float price, string numOS, float AvgS, string link,
-                int del, string desc)
+                int del, string desc,string iurl)
         {
             this.ID               = id           ;
             this.Name             = name         ;
@@ -61,6 +63,7 @@ namespace GetGoolePlayData
             this.weblink          = link         ;
             this.deleted          = del          ;
             this.description      = desc         ;
+            this.iconURL          = iurl         ;
         }
         public string getString()
         {
@@ -75,6 +78,7 @@ namespace GetGoolePlayData
                     this.AverageStar     +"\t"+
                     this.weblink         +"\t"+
                     this.description     +"\t"+
+                    this.iconURL + "\t" +
                     this.deleted         
                                 );
         }
@@ -171,14 +175,15 @@ namespace GetGoolePlayData
             //}
             #endregion
 
-            #region Write App.txt
+            #region Set App array
             int AppCounter = 0;
             APP[] AppArray = new APP[AppURLStack.Count];
             for(int i= 0;i<AppURLStack.Count;i++)
             {
                 AppArray[i] = new APP();
             }
-            #region set App array
+
+            
             foreach(string appurltemp in AppURLStack)
             {
                 string AppSource = GetWebSourceCode(appurltemp);
@@ -192,11 +197,13 @@ namespace GetGoolePlayData
                 string price = "0";
                 string label = "null";
                 string numOfIns = "null";
+                string iconurl = "null";
                 int labelID = 1;
                 try
                 {
                     string[] industryHelper = AppSource.Split(new string[] { "<span itemprop=\"name\">" },StringSplitOptions.None);
                     Industry = industryHelper[1].Substring(0, industryHelper[1].IndexOf('<'));
+                    Industry = Regex.Replace(Industry, @"[^\u0000-\u007F]+", string.Empty);
                 }
                 catch
                 {
@@ -222,6 +229,7 @@ namespace GetGoolePlayData
                     string[] nameHelper = AppSource.Split(new string[] { "</script><title id=\"main-title\">" }, StringSplitOptions.None);
                     string[] nameHelper2 = nameHelper[1].Split(new string[] { " - Android Apps on Google Play" }, StringSplitOptions.None);
                     Name = nameHelper2[0];
+                    Name = Regex.Replace(Name, @"[^\u0000-\u007F]+", string.Empty);
                 }
                 catch
                 {
@@ -272,11 +280,13 @@ namespace GetGoolePlayData
                 {
                     string[] numOfInsHelper = AppSource.Split(new string[] { "itemprop=\"numDownloads\">" }, StringSplitOptions.None);
                     numOfIns = numOfInsHelper[1].Substring(0, numOfInsHelper[1].IndexOf('<'));
+                    numOfIns = numOfIns.Replace(" ","");
                 }
                 catch
                 {
                     Console.WriteLine(appurltemp+" has erros in Num of installing");
                 }
+
                 try
                 {
                     string[] descripHelper = AppSource.Split(new string[] { "itemprop=\"de" }, StringSplitOptions.None);
@@ -289,6 +299,7 @@ namespace GetGoolePlayData
                     description = description.Replace("<br>"," ");//incomplete, convert html<br> to "\n" may cause bulk insert false
                     description = description.Replace("\t"," ");
                     description = description.Replace("\n", " ");
+                    description = Regex.Replace(description, @"[^\u0000-\u007F]+", string.Empty);
                     //Console.WriteLine(description);
                 }
                 catch
@@ -296,12 +307,25 @@ namespace GetGoolePlayData
                     Console.WriteLine(appurltemp + " has erros in description");
                 }
 
-                AppArray[AppCounter].SetAPP(ID,Name,label,labelID, PlatformID, Industry, float.Parse(price), numOfIns, AverageStar, appurltemp, deleted, description);
-                //Console.WriteLine(ID+ "\t" + Name + "\t" + label+"\t" + labelID + "\t" + PlatformID + "\t" + Industry + "\t" + float.Parse(price)+ "\t" + numOfIns + "\t" + AverageStar + "\t" + appurltemp + "\t" + deleted + "\t" + description);
+                try
+                {
+                    string[] iconHelper = AppSource.Split(new string[] { "cover-image\" src=\"" }, StringSplitOptions.None);
+                    iconurl = iconHelper[1].Substring(0, iconHelper[1].IndexOf('"'));
+                }
+                catch
+                {
+                    Console.WriteLine(appurltemp + " has erros in iconURL");
+                }
+
+
+                AppArray[AppCounter].SetAPP(ID,Name,label,labelID, PlatformID, Industry, float.Parse(price), numOfIns, AverageStar, appurltemp, deleted, description,iconurl);
+                Console.WriteLine(ID+ "\t" + Name + "\t" + label+"\t" + labelID + "\t" + PlatformID + "\t" + Industry + "\t" + float.Parse(price)+ "\t" + numOfIns + "\t" + AverageStar + "\t" + appurltemp + "\t" + deleted + "\t" + description+"\t"+iconurl);
                 AppCounter++;
             }
             #endregion
-            string AppTXT = "AppID\tAppName\tAppLabelID\tPlatformID\tAppIndustry\tPrice\tNumOfInstalls\tAverageStar\tWebLink\tDescription\tDeleted\r\n";
+
+            #region Write App.txt
+            string AppTXT = "AppID\tAppName\tAppLabelID\tPlatformID\tAppIndustry\tPrice\tNumOfInstalls\tAverageStar\tWebLink\tDescription\tIconURL\tDeleted\r\n";
 
             foreach (APP apptemp in AppArray)
             {
@@ -309,7 +333,6 @@ namespace GetGoolePlayData
             }
             System.IO.File.WriteAllText("APP.txt", AppTXT);
             #endregion
-
 
         }
     }
