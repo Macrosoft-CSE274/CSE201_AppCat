@@ -2,19 +2,19 @@
 
 {% block jumbo %}
     <div class = "container">
-        <h1> THis is the {{app.name}}' page</h1>
+        <h1> This is the {{app.name}} page</h1>
 
         <h4>Name: {{ app.name }}</h4>
-        <h4>developer: {{ app.developer }} </h4>
-        <h4>platform: {{ app.platform }} </h4>
-        <h4>versions: {{ app.version }} </h4>
-        <h4>rating: {{ app.rating }} </h4>
+        <h4>Developer: {{ app.developer }} </h4>
+        <h4>Platform: {{ app.platform }} </h4>
+        <h4>Versions: {{ app.version }} </h4>
+        <h4>Rating: {{ app.rating }} </h4>
 
     </div>
 
     <div class = "container">
-        <h5>Do you want to add comment to app?</h5>
-        <h5>Welcome, you comment is welcome!</h5>
+        <h5>Do you want to add a comment on this app?</h5>
+        <h5>Welcome, your comment is welcome!</h5>
         <form method = "post" action = "addComment">
             {% csrf_token %}
             <input type="hidden" name = "appname" value = "{{app.name}}">
