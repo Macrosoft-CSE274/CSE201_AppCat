@@ -87,11 +87,13 @@
 
 
   </body>
+{% block featured %}
 <div class="container scroll-buffer" id="featured_apps">
   		<section>
 			<div class="page-header">
   				<h1>Featured Applications<br></h1>
   			</div>
+			<hr>
 			<div class="row">
 				<div class="col-xs-12">
 					<h1>Social</h1>
@@ -135,15 +137,15 @@
 						Get the official YouTube app for iPhone and iPad.
 						See what the world is watching in music, gaming, entertainment, news and more. Subscribe to channels, share with friends, edit and upload videos, and watch on any device.
 
-						You can also create playlists, check out what’s trending, express yourself with comments, share videos with friends, cast a video to your TV, and more – all from inside the app.
 					</p>
 
   				</div>
 
   			</div>
+			<hr>
 			<div class="row">
 				<div class="col-xs-12">
-					<h1>Email</h1>
+					<h1>Email & Communication</h1>
 				</div>
 			</div>
 			<br>
@@ -161,30 +163,27 @@
 
   				</div>
 				<div class="col-md-4 centered">
-					<img src="{% static 'img/instagram.png' %}" width="200" height="200" class="img-responsive"/>
+					<img src="{% static 'img/what.png' %}" width="200" height="200" class="img-responsive"/>
 					<p class="center">
-					<h2><b>Instagram</b></h2>
-						<h4>Photo & Video</h4>
+					<h2><b>WhatsApp</b></h2>
+						<h4>Social Networking</h4>
 						<br>
-							Instagram is a simple way to capture and share the world’s moments.
-							Follow your friends and family to see what they’re up to,
-							and discover accounts from all over the world that are sharing
-							things you love. Join the community of over 500 million people
-							and express yourself by sharing all the moments
-							of your day––the highlights and everything in between, too.
+							WhatsApp Messenger is a FREE messaging app available for iPhone
+							and other smartphones. WhatsApp uses your phone's Internet connection
+							(4G/3G/2G/EDGE or Wi-Fi, as available) to let you message and call friends
+							and family. Switch from SMS to WhatsApp to send and receive messages,
+							calls, photos, videos, and Voice Messages.
 					</p>
 
   				</div>
 				<div class="col-md-4 centered">
-					<img src="{% static 'img/youtube.png' %}" width="200" height="200" class="img-responsive"/>
+					<img src="{% static 'img/fbm.png' %}" width="200" height="200" class="img-responsive"/>
 					<p class="center">
-					<h2><b>YouTube: Watch, Listen, Stream</b></h2>
-						<h4>Photo & Video</h4>
+					<h2><b>Facebook Messenger</b></h2>
+						<h4>Communication</h4>
 						<br>
-						Get the official YouTube app for iPhone and iPad.
-						See what the world is watching in music, gaming, entertainment, news and more. Subscribe to channels, share with friends, edit and upload videos, and watch on any device.
+							Instantly connect with the people in your life. Messenger is free, fast, and secure.
 
-						You can also create playlists, check out what’s trending, express yourself with comments, share videos with friends, cast a video to your TV, and more – all from inside the app.
 					</p>
 
   				</div>
@@ -193,47 +192,49 @@
 			<hr>
 			<div class="row">
 				<div class="col-xs-12">
-					<h1>Travelling</h1>
+					<h1>Travel</h1>
 				</div>
 			</div>
+			<br>
 
 			<div class="row">
-				<div class="col-md-4">
-					<h3>Silicon Valley</h3>
+  				<div class="col-md-4 centered">
+					<img src="{% static 'img/GMaps.png' %}" width="200" height="200"class="img-responsive"/>
 					<p class="center">
-						It has always been a dream of mine to go to America. When I was young I thought that everything was just bigger and better. I've since realised that the United States (especially the San Francisco bay area) can provide a wealth of opportunity that is simply not available to the same extent from anywhere else in the world.
+					<h2><b>Google Maps</b></h2>
+						<h4>Maps & Navigation</h4>
+						<br>
+					Going somewhere? Go with Maps, the official app you can rely on for real-time GPS navigation, traffic, transit, and details about millions of places, such as reviews and popular times.
 					</p>
-					<p class="center">
-						I flew out to San Francisco on 30th June 2016 and I love being able to meet so many inspirational people in the industry. The other huge advantage about being here is that I get to surround myself with other people who code. This only motivates me to work harder and collaborate more effectively.
-					</p>
-					<div class="google-maps">
-						<iframe src= "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d449042.5335197182!2d-122.30228463569685!3d37.585277159784376!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2suk!4v1465734983081" frameborder="1" style="border:0" allowfullscreen></iframe>
-					</div>
-				</div>
-				<div class="col-md-4">
-					<h3>Danish Jamboree</h3>
-					<p class="center">
-						<a href="https://maxg-static.s3.amazonaws.com/static/home/images/denmark.jpg?Signature=umGr%2FxZvlZS3wR70y6y8Gkx%2BWbM%3D&amp;Expires=1510718192&amp;AWSAccessKeyId=AKIAJDHFIV6QUC3D7I6A" data-lightbox="denmark-modal" data-title="">
-							<img src="https://maxg-static.s3.amazonaws.com/static/home/images/denmark.jpg?Signature=umGr%2FxZvlZS3wR70y6y8Gkx%2BWbM%3D&amp;Expires=1510718192&amp;AWSAccessKeyId=AKIAJDHFIV6QUC3D7I6A" alt="Denmark" class="img-responsive"/>
-						</a><br>
-						I was a part of the scouts from a young age, but never was it more exciting for me than when my scout troop got the incredible opportunity to go travelling to Denmark from England to meet <i>over 30,000 scouts</i> from around the world for a week in a vast international event. Not only that, we got to spend another week or so in a Danish homestay experiencing a new culture and meeting some really brilliant people. By the way, <a href="https://www.youtube.com/watch?v=23KTho1Dch4">here's</a> the song for that event (it was certainly fun trying to sing the Danish lyrics)!
-					</p>
-				</div>
-				<div class="col-md-4">
-					<h3>Expedition</h3>
-					<p class="center">
-						Having had an early morning paper round for over five years - largely to save up to be able to go on expedition, I was able to
-						fund my place on an expedition to Laos and Thailand in the summer of 2014, which was undoubtedly one of the most significant periods of
-						my life. The whole trip and the opportunity to teach English to Laos' children taught me so much about our materialistic
-						values and lack of appreciation of our comparative privilege. We stayed in an old classroom in the village,
-						when I had some free time I covered the chalk boards with some good old proof by induction and taught some times tables too!<br>
-					</p>
-					<a href="https://maxg-static.s3.amazonaws.com/static/home/images/exped.jpg?Signature=0WpF9HaG1LKRPbT1dP4wYSpdJiY%3D&amp;Expires=1510718192&amp;AWSAccessKeyId=AKIAJDHFIV6QUC3D7I6A" data-lightbox="exped-modal" data-title="">
-						<img src="https://maxg-static.s3.amazonaws.com/static/home/images/exped.jpg?Signature=0WpF9HaG1LKRPbT1dP4wYSpdJiY%3D&amp;Expires=1510718192&amp;AWSAccessKeyId=AKIAJDHFIV6QUC3D7I6A" alt="Expedition" class="img-responsive"/>
-					</a>
-				</div>
 
-			</div>
+  				</div>
+				<div class="col-md-4 centered">
+					<img src="{% static 'img/Airbnb.jpg' %}" width="200" height="200" class="img-responsive"/>
+					<p class="center">
+					<h2><b>Airbnb</b></h2>
+						<h4>Travel & Local</h4>
+						<br>
+							Unforgettable trips start with Airbnb. Find adventures in faraway places or your hometown, and access unique homes, experiences, and places around the world. Book everything your trip needs, or start earning money as a host.
+					</p>
+
+  				</div>
+				<div class="col-md-4 centered">
+					<img src="{% static 'img/waze.png' %}" width="200" height="200" class="img-responsive"/>
+					<p class="center">
+					<h2><b>Waze</b></h2>
+						<h4>Maps & Navigation</h4>
+						<br>
+						Always know what’s happening on the road with Waze. Even if you know the way, Waze tells you instantly about traffic, construction, police, crashes, & more. If traffic is bad on your route, Waze will change it to save you time.
+					</p>
+
+  				</div>
+
+  			</div>
+			<hr>
+
+
   		</section>
   	</div>
+
+	{% endblock %}
 </html>
