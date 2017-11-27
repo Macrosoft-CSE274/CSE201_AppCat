@@ -10,10 +10,10 @@
         {% for app in appList %}
         	<div class="container" border = "2px; green">
         		<h4>Name: {{ app.name }}</h4>
-        		<h4>developer: {{ app.developer }} </h4>
-        		<h4>platform: {{ app.platform }} </h4>
-        		<h4>versions: {{ app.version }} </h4>
-        		<h4>rating: {{ app.rating }} </h4>
+        		<h4>Developer: {{ app.developer }} </h4>
+        		<h4>Platforms: {{ app.platform }} </h4>
+        		<h4>Version: {{ app.versions }} </h4>
+        		<h4>Rating: {{ app.rating }} stars </h4>
         	</div>
                 <div class="container">
                         <form action = "app_detail/" method = "get">
@@ -29,6 +29,5 @@
         {% endblock %}
 
 {% block featured %}
-
 
 {% endblock %}
